@@ -118,9 +118,11 @@ def get_user_task(tg_id: int) -> list[tuple]:
     db = connect()
     cursor = db.cursor()
 
-    tasks = cursor.execute(
-        f"""SELECT task, time_start, time_finish, description FROM tasks WHERE id = {get_user_id(tg_id)}"""
+    cursor.execute(
+        f"""SELECT task, time_start, time_finish FROM tasks WHERE id = {get_user_id(tg_id)}"""
     )
+
+    tasks = cursor.fetchall()
 
     db.close()
 
