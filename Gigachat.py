@@ -14,7 +14,7 @@ from langchain.chat_models.gigachat import GigaChat
 
 from db import get_gigachat_cred, insert_user_task
 from processing_data_for_db import processing_for_add_in_db
-
+from gant import Gant_Diagram
 
 logging.getLogger(__name__)
 credentials = get_gigachat_cred()
@@ -52,11 +52,11 @@ def message_processing(tg_id: int, message: str) -> str:
                 insert_user_task(tg_id, el)
             return plan
         
-        # res = chat([PROMPT_FOR_GANT, HumanMessage(content=message)]).content
+        res = chat([PROMPT_FOR_GANT, HumanMessage(content=message)]).content
 
-        # if res.lower() == "да":
-        #     way = Gant_Diagram(tg_id)
-        #     return way
+        if res.lower() == "да":
+            way = Gant_Diagram(tg_id)
+            return way
         else:
             if tg_id in messages:
                 if len(messages[tg_id]) >= 10:
