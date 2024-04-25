@@ -1,14 +1,10 @@
-import sys
-import time
-
 import telebot
 import logging
 import requests
 
 import src.setting
-from db import connect, get_telegram_bot_cred, create_tables
+from db import get_telegram_bot_cred, create_tables
 from Gigachat import message_processing
-from tg_function import split_answer
 
 logging.getLogger(__name__)
 
@@ -38,6 +34,11 @@ def get_text_messages(got_message):
         send_message(got_message.from_user.id, answer)
     except requests.exceptions.ReadTimeout as e:
         logging.critical(f"Read timed out: {e}", exc_info=True)
+    except telebot.apihelper.ApiTelegramException as e:
+        logging.critical(f"Failed to give an answer: {e}", exc_info=True)
+        send_message(
+            got_message.from_user.id, "Извините, не удалось обработать Ваш запрос"
+        )
 
 
 bot.polling(none_stop=True, interval=0)
