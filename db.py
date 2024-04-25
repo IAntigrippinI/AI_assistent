@@ -21,8 +21,8 @@ def connect():
         return False
 
 
-def create_tables(db: CMySQLConnection):
-
+def create_tables():
+    db = connect()
     cursor = db.cursor()
 
     cursor.execute(
@@ -38,8 +38,8 @@ def create_tables(db: CMySQLConnection):
                 id int AUTO_INCREMENT PRIMARY KEY,
                 user_id INT,
                 task VARCHAR(255),
-                time_start DATE,
-                time_finish DATE,
+                time_start float,
+                time_finish float,
                 discription VARCHAR(255))"""
     )
 
@@ -47,7 +47,27 @@ def create_tables(db: CMySQLConnection):
     db.close()
 
 
-def insert_user(db: CMySQLConnection, tg_id: int):
+def check_user_in_db(tg_id: int):
+    db = connect()
+    cursor = db.cursor()
+    cursor.execute(f"SELECT * FROM users WHERE tg_id = {tg_id}")
+    result = cursor.fetchall()
+    db.close()
+    print(result)
+    # Проверка наличия результатов
+    if len(result) == 0:
+        print("Запись не существует")
+        logging.info("NOT EXISTS")
+        insert_user(tg_id)
+    else:
+        print(result[0])
+        # elif len(result[0][0]) >= 1:
+        print("Запись существует")
+        logging.info("EXISTS")
+
+
+def insert_user(tg_id: int):
+    db = connect()
 
     cursor = db.cursor()
 
@@ -60,39 +80,42 @@ def insert_user(db: CMySQLConnection, tg_id: int):
 
 
 def insert_user_task(
-    db: CMySQLConnection,
+    # db: CMySQLConnection,
     tg_id: int,
     task: str,
-    time_start: float,
-    time_finish: float,
-    description: str,
+    time_start: float = 0,
+    time_finish: float = 0,
+    description: str = "Desc",
 ):
-    cursor = db.cursor()
+    check_user_in_db(tg_id)
 
     user_id = get_user_id(tg_id)
 
+    db = connect()
+    cursor = db.cursor()
     cursor.execute(
-        f"""INSERT INTO tasks (user_id, task, time_start, time_finish, description) VALUES ({user_id}, {task}, {time_start}, {time_finish}, {description})"""
+        f"""INSERT INTO tasks (user_id, task, time_start, time_finish, discription) VALUES ({user_id},'{task}', {time_start}, {time_finish}, '{description}')"""
     )
 
     db.commit()
     db.close()
 
 
-def get_user_id(db: CMySQLConnection, tg_id: int) -> int:
-
+def get_user_id(tg_id: int) -> int:
+    check_user_in_db(tg_id)
+    db = connect()
     cursor = db.cursor()
 
-    cursor.execute(f"""SELECT id FROM users WHERE tg_id = {tg_id}""")
-    user_id = cursor.fetchall()
+    cursor.execute(f"""SELECT id FROM users WHERE tg_id = '{tg_id}'""")
+    user_id = cursor.fetchall()[0][0]
 
     db.close()
-
+    logging.info(f"GOT USER ID = {user_id}")
     return user_id
 
 
-def get_user_task(db: CMySQLConnection, tg_id: int) -> list[tuple]:
-
+def get_user_task(tg_id: int) -> list[tuple]:
+    db = connect()
     cursor = db.cursor()
 
     tasks = cursor.execute(
@@ -104,8 +127,8 @@ def get_user_task(db: CMySQLConnection, tg_id: int) -> list[tuple]:
     return tasks
 
 
-def remove_task(db: CMySQLConnection, tg_id: int, time: float):
-
+def remove_task(tg_id: int, time: float):
+    db = connect()
     cursor = db.cursor()
 
     cursor.execute(
@@ -116,13 +139,19 @@ def remove_task(db: CMySQLConnection, tg_id: int, time: float):
     db.close()
 
 
-def get_gigachat_cred(db: CMySQLConnection) -> str:
+def get_gigachat_cred() -> str:
+    db = connect()
     cursor = db.cursor()
     cursor.execute("SELECT cred FROM credentials WHERE id = 1")
-    return cursor.fetchall()[0][0]
+    cred = cursor.fetchall()[0][0]
+    db.close()
+    return cred
 
 
-def get_telegram_bot_cred(db: CMySQLConnection) -> str:
+def get_telegram_bot_cred() -> str:
+    db = connect()
     cursor = db.cursor()
     cursor.execute("SELECT cred FROM credentials WHERE id = 2")
-    return cursor.fetchall()[0][0]
+    cred = cursor.fetchall()[0][0]
+    db.close()
+    return cred

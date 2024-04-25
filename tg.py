@@ -1,21 +1,25 @@
 import sys
+import time
 
 import telebot
 import logging
 import requests
 
 import src.setting
-from db import connect, get_telegram_bot_cred
+from db import connect, get_telegram_bot_cred, create_tables
 from Gigachat import message_processing
+from tg_function import split_answer
 
 logging.getLogger(__name__)
 
-db = connect()
-if not db:
-    sys.exit()
+try:
+    create_tables()
+except Exception as e:
+    logging.critical(f"Failed create tables: {e}", exc_info=True)
+
 
 try:
-    credentials = get_telegram_bot_cred(db)
+    credentials = get_telegram_bot_cred()
     bot = telebot.TeleBot(credentials)
 except telebot.apihelper.ApiTelegramException as e:
     logging.critical(f"Failed to run telegram bot: {e}", exc_info=True)
