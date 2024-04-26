@@ -51,16 +51,12 @@ def check_user_in_db(tg_id: int):
     cursor.execute(f"SELECT * FROM users WHERE tg_id = {tg_id}")
     result = cursor.fetchall()
     db.close()
-    print(result)
-    # Проверка наличия результатов
+
     if len(result) == 0:
-        print("Запись не существует")
         logging.info("NOT EXISTS")
         insert_user(tg_id)
     else:
-        print(result[0])
-        # elif len(result[0][0]) >= 1:
-        print("Запись существует")
+
         logging.info("EXISTS")
 
 
