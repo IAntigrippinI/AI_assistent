@@ -2,9 +2,34 @@ import re
 import os
 import logging.config
 from langchain.schema import SystemMessage
+from pathlib import Path
 
 
-os.mkdir("logs")
+Path(os.getcwd() + "/logs").mkdir(parents=True, exist_ok=True)
+
+Path(os.getcwd() + "/pict").mkdir(parents=True, exist_ok=True)
+
+formatter = logging.Formatter("%(asctime)s %(levelname)s %(message)s")
+
+
+def setup_logger(name, log_file, level=logging.INFO):
+    """To setup as many loggers as you want"""
+
+    handler = logging.FileHandler(log_file)
+    handler.setFormatter(formatter)
+
+    logger = logging.getLogger(name)
+    logger.setLevel(level)
+    logger.addHandler(handler)
+
+    return logger
+
+
+setup_logger("chat_logger", "logs/chat_logs.log")
+chat_logger = logging.getLogger("chat_logger")
+setup_logger("system_logger", "logs/sys_logs.log")
+system_logger = logging.getLogger("system_logger")
+
 
 DATE_PATTERN: re.Pattern = re.compile(r"\d\d\.\d\d")
 
@@ -26,7 +51,6 @@ PROMPT_FOR_ROADMAP = SystemMessage(
     Напиши каждый пункт и срок его выполнения в отдельной строке.
     Срок указывай только по образцу ДД.ММ.
     Сложи время выполнения всех пунктов и выведи в отдельную строку"""
-    # "Ты таск-менеджер, который получает информацию о сроках выполнения задачи, получает ее описание и дает ей название\n"
 )
 
 PROMPT_FOR_GANT = SystemMessage(
@@ -39,32 +63,3 @@ PROMPT_FOR_COUNSELOR = SystemMessage(
             Твоя задача дать рекомендацию как сделать эту задачу.
             Так же ты должен посоветовать книги и научные статьи, которые помогут с решением задачи"""
 )
-
-
-LOGGING = {
-    "version": 1,
-    "disable_existing_loggers": False,
-    "formatters": {
-        "json": {
-            "format": "%(asctime)s %(levelname)s %(message)s %(module)s",
-            "datefmt": "%Y-%m-%dT%H:%M:%SZ",
-        }
-    },
-    "handlers": {
-        "console": {
-            "class": "logging.StreamHandler",
-            "stream": "ext://sys.stdout",
-            "formatter": "json",
-            "level": "INFO",
-        },
-        "file": {
-            "class": "logging.handlers.RotatingFileHandler",
-            "filename": "logs/logconfig.log",
-            "formatter": "json",
-            "backupCount": "3",
-        },
-    },
-    "loggers": {"": {"handlers": ["console", "file"], "level": "INFO"}},
-}
-
-logging.config.dictConfig(LOGGING)

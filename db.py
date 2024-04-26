@@ -3,9 +3,7 @@ import logging
 from datetime import datetime
 from mysql.connector.connection_cext import CMySQLConnection
 
-import src.setting
-
-logging.getLogger(__name__)
+from src.setting import system_logger
 
 
 def connect():
@@ -13,11 +11,11 @@ def connect():
         db = mysql.connector.connect(
             host="localhost", user="root", passwd="", database="assistent"
         )
-        logging.info("Connection success")
+        system_logger.info("Connection success")
 
         return db
     except mysql.connector.errors.ProgrammingError as e:
-        logging.critical(f"Failed to connect to database: {e}", exc_info=True)
+        system_logger.critical(f"Failed to connect to database: {e}", exc_info=True)
         return False
 
 
@@ -110,7 +108,7 @@ def get_user_id(tg_id: int) -> int:
     user_id = cursor.fetchall()[0][0]
 
     db.close()
-    logging.info(f"GOT USER ID = {user_id}")
+    system_logger.info(f"GOT USER ID = {user_id}")
     return user_id
 
 
