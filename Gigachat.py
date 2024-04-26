@@ -31,32 +31,20 @@ def message_processing(tg_id: int, message: str) -> str:
     quastion = PROMPT_BASE + "\n" + message
 
     try:
+
         res = chat([HumanMessage(content=quastion)]).content
 
         if res.lower() == "да":
             plan = chat([PROMPT_FOR_ROADMAP, HumanMessage(content=message)]).content
-            # try:
-            #     send = tg.bot.send_message(
-            #         tg_id, "В какие сроки вы планируете это сделать?"
-            #     )
-
-            #     period = tg.bot.register_next_step_handler(send, get_period)
-            #     logging.info(f"GOT PERIOD: {period}")
-            # except:
-            #     logging.critical("Bad code")
             logging.info(plan)
 
             list_tasks_for_db = processing_for_add_in_db(plan, message)
 
             for el in list_tasks_for_db:
                 insert_user_task(tg_id, el[0], el[1], el[2])
-            return plan
-
-        res = chat([PROMPT_FOR_GANT, HumanMessage(content=message)]).content
-
-        if res.lower() == "да":
             way = Gant_Diagram(tg_id)
-            return way
+            return plan, way
+
         else:
             if tg_id in messages:
                 if len(messages[tg_id]) >= 10:
@@ -67,10 +55,10 @@ def message_processing(tg_id: int, message: str) -> str:
                 messages[tg_id] = [PROMPT_FOR_QUASTION]
                 messages[tg_id].append(HumanMessage(content=message))
             answer = chat(messages[tg_id]).content
-            return answer
+            return answer, ""
     except Exception as e:
         logging.critical(f"Failed in message_processing: {e}", exc_info=True)
-        return "Произошла ошибка, попробуйте снова"
+        return "Произошла ошибка, попробуйте снова", ""
 
 
 def get_recomindation(user_id: int, message: str) -> str:
