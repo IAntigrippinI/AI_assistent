@@ -31,6 +31,9 @@ def get_text_messages(got_message):
         if got_message.text == "/del":
             remove_task(got_message.from_user.id, 1)
             send_message(got_message.from_user.id, "Удалено")
+        elif got_message.text == "/start":
+            with open("README.md", "r", encoding="utf-8") as file:
+                send_message(got_message.from_user.id, file.read())
 
         else:
             answer, source = message_processing(
