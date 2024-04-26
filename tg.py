@@ -30,7 +30,7 @@ def get_text_messages(got_message):
     try:
         logging.info(got_message.text)
         answer = message_processing(got_message.from_user.id, got_message.text)
-        if 'pict' in answer:
+        if "pict" in answer:
             bot.send_photo(got_message.from_user.id, answer)
         else:
             logging.info(answer)
