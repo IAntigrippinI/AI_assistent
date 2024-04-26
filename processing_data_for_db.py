@@ -26,12 +26,12 @@ def processing_for_add_in_db(plan: str, handle: str) -> list:
         dates = DATE_PATTERN.findall(el)
         logging.info(" ".join(dates))
         if len(dates) == 2:
-            task = el[: el.find(dates[0])]
+            task = el[2 : el.find(dates[0])].replace("-", "")
             time_start = get_timestamp(dates[0])
             time_finish = get_timestamp(dates[1])
             tuple_tasks.append(tuple([task, time_start, time_finish]))
         elif len(dates) == 1:
-            task = el[: el.find(dates[0])]
+            task = el[2 : el.find(dates[0])].replace("-", "")
             time_start = get_timestamp(dates[0])
             time_finish = get_timestamp_plus_day(dates[0])
             tuple_tasks.append(tuple([task, time_start, time_finish]))
