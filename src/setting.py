@@ -1,8 +1,10 @@
 import re
-
+import os
 import logging.config
 from langchain.schema import SystemMessage
 
+
+os.mkdir("logs")
 
 DATE_PATTERN: re.Pattern = re.compile(r"\d\d\.\d\d")
 
@@ -30,6 +32,12 @@ PROMPT_FOR_ROADMAP = SystemMessage(
 PROMPT_FOR_GANT = SystemMessage(
     content="""Ты ИИ-ассистент, который помогает визуализировать задачи пользователя при помощи диаграммы Ганта.
                 Ессли в ведённом сообщении тебя просят создать диаграмму Ганта, то напиши 'Да', иначе напиши 'Нет' """
+)
+
+PROMPT_FOR_COUNSELOR = SystemMessage(
+    content="""Ты Ассистент по научной работе. Тебе сообщают задачу, котороую нужно сделать научному работнику.
+            Твоя задача дать рекомендацию как сделать эту задачу.
+            Так же ты должен посоветовать книги и научные статьи, которые помогут с решением задачи"""
 )
 
 
