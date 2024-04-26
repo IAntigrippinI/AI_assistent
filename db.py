@@ -114,6 +114,17 @@ def get_user_id(tg_id: int) -> int:
     return user_id
 
 
+def get_all_users_id() -> list:
+    db = connect()
+    cursor = db.cursor()
+
+    cursor.execute("""SELECT tg_id FROM users""")
+
+    users_id = cursor.fetchall()
+    db.close()
+    return users_id[0]
+
+
 def get_user_task(tg_id: int) -> list[tuple]:
     user_id = get_user_id(tg_id)
     db = connect()
