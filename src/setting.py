@@ -2,9 +2,11 @@ import re
 import os
 import logging.config
 from langchain.schema import SystemMessage
+from pathlib import Path
 
 
-os.mkdir("logs")
+Path(os.getcwd() + "/logs").mkdir(parents=True, exist_ok=True)
+
 
 DATE_PATTERN: re.Pattern = re.compile(r"\d\d\.\d\d")
 
