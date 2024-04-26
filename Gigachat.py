@@ -4,6 +4,7 @@ from src.setting import (
     PROMPT_FOR_QUASTION,
     PROMPT_BASE,
     PROMPT_FOR_GANT,
+    PROMPT_FOR_COUNSELOR,
 )
 
 import logging
@@ -22,6 +23,11 @@ credentials = get_gigachat_cred()
 chat = GigaChat(
     credentials=credentials, verify_ssl_certs=False, scope="GIGACHAT_API_CORP"
 )
+
+counselor = GigaChat(
+    credentials=credentials, verify_ssl_certs=False, scope="GIGACHAT_API_CORP"
+)
+
 
 messages = {}
 
@@ -61,8 +67,9 @@ def message_processing(tg_id: int, message: str) -> str:
         return "Произошла ошибка, попробуйте снова", ""
 
 
-def get_recomindation(user_id: int, message: str) -> str:
-    pass
+def get_recommendation(task):
+    res = counselor([PROMPT_FOR_COUNSELOR, HumanMessage(task)]).content
+    return res
 
 
 # def get_plan(tg_id: int, message: str):
