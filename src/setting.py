@@ -1,6 +1,10 @@
+import re
+
 import logging.config
 from langchain.schema import SystemMessage
 
+
+DATE_PATTERN: re.Pattern = re.compile(r"\d\d\.\d\d")
 
 PROMPTS_BASE_SYS = SystemMessage(
     content=""" Ты ИИ-ассистент, который помогает строить план действий для решение задачи. 
