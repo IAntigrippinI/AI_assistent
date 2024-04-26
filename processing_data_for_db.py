@@ -14,7 +14,7 @@ def get_timestamp(date: str) -> float:
 def get_timestamp_plus_day(date: str) -> float:
     year = datetime.now().year
     month, day = date.split(".")[1], date.split(".")[0]
-    return (datetime(year, int(month), int(day)) + timedelta(1)).timestamp()
+    return (datetime(year, int(month), int(day)) + timedelta(2)).timestamp()
 
 
 def processing_for_add_in_db(plan: str, handle: str) -> list:
