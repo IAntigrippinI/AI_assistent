@@ -9,11 +9,10 @@ from db import connect, get_user_task
 
 def Gant_Diagram(tg_id):
 
-    user_id = get_user_task(tg_id)
-    list_of_touples = get_task(user_id)
+    list_of_touples = get_user_task(tg_id)
     df = pd.DataFrame(list_of_touples, columns=["Task", "Start", "Finish"])
 
-    df = df["Task", "Start", "Finish"]
+    # df = df["Task", "Start", "Finish"]
 
     df["Start"] = pd.to_datetime(df["Start"], unit="s")
     df["Finish"] = pd.to_datetime(df["Finish"], unit="s")
@@ -82,8 +81,11 @@ def Gant_Diagram(tg_id):
         )
 
     # текущая дата
-    today = datetime.datetime.now().strftime("%Y-%m-%d")
-    today_num = datestr2num(today)
+    format_string = "%Y-%m-%d"
+    # today = datetime.datetime.now().strftime("%Y-%m-%d")
+    today = datetime.datetime.fromtimestamp(list_of_touples[0][1])
+
+    today_num = datestr2num(today.strftime(format_string))
     ax.axvline(today_num, color="red", alpha=0.8)
 
     ax.tick_params(axis="both", colors="white")
