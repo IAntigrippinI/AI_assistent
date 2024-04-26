@@ -2,9 +2,7 @@ import logging
 
 from datetime import datetime
 
-from src.setting import DATE_PATTERN
-
-logging.getLogger(__name__)
+from src.setting import DATE_PATTERN, system_logger
 
 
 def get_timestamp(date: str) -> float:
@@ -24,7 +22,7 @@ def processing_for_add_in_db(plan: str, handle: str) -> list:
     tuple_tasks = []
     for el in list_tasks:
         dates = DATE_PATTERN.findall(el)
-        logging.info(" ".join(dates))
+        system_logger.info(" ".join(dates))
         if len(dates) == 2:
             task = el[2 : el.find(dates[0])].replace("-", "")
             time_start = get_timestamp(dates[0])

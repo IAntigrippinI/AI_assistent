@@ -1,12 +1,3 @@
-from src.setting import (
-    PROMPTS_BASE_SYS,
-    PROMPT_FOR_ROADMAP,
-    PROMPT_FOR_QUASTION,
-    PROMPT_BASE,
-    PROMPT_FOR_GANT,
-    PROMPT_FOR_COUNSELOR,
-)
-
 import logging
 import logging.config
 
@@ -16,8 +7,18 @@ from langchain.chat_models.gigachat import GigaChat
 from db import get_gigachat_cred, insert_user_task
 from processing_data_for_db import processing_for_add_in_db
 from gant import Gant_Diagram
+from src.setting import (
+    PROMPTS_BASE_SYS,
+    PROMPT_FOR_ROADMAP,
+    PROMPT_FOR_QUASTION,
+    PROMPT_BASE,
+    PROMPT_FOR_GANT,
+    PROMPT_FOR_COUNSELOR,
+    system_logger,
+    chat_logger,
+)
 
-logging.getLogger(__name__)
+
 credentials = get_gigachat_cred()
 
 chat = GigaChat(
@@ -42,7 +43,7 @@ def message_processing(tg_id: int, message: str) -> str:
 
         if res.lower() == "да":
             plan = chat([PROMPT_FOR_ROADMAP, HumanMessage(content=message)]).content
-            logging.info(plan)
+            chat_logger.info(plan)
 
             list_tasks_for_db = processing_for_add_in_db(plan, message)
 
@@ -63,7 +64,7 @@ def message_processing(tg_id: int, message: str) -> str:
             answer = chat(messages[tg_id]).content
             return answer, ""
     except Exception as e:
-        logging.critical(f"Failed in message_processing: {e}", exc_info=True)
+        system_logger.critical(f"Failed in message_processing: {e}", exc_info=True)
         return "Произошла ошибка, попробуйте снова", ""
 
 
