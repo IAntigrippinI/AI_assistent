@@ -115,12 +115,15 @@ def get_user_id(tg_id: int) -> int:
 
 
 def get_user_task(tg_id: int) -> list[tuple]:
+    user_id = get_user_id(tg_id)
     db = connect()
     cursor = db.cursor()
 
-    tasks = cursor.execute(
-        f"""SELECT task, time_start, time_finish, description FROM tasks WHERE id = {get_user_id(tg_id)}"""
+    cursor.execute(
+        f"""SELECT task, time_start, time_finish FROM tasks WHERE user_id = {user_id}"""
     )
+
+    tasks = cursor.fetchall()
 
     db.close()
 
@@ -131,9 +134,7 @@ def remove_task(tg_id: int, time: float):
     db = connect()
     cursor = db.cursor()
 
-    cursor.execute(
-        f"DELETE FROM tasks WHERE id = {get_user_id(tg_id)} AND time_start < {time}"
-    )
+    cursor.execute(f"DELETE FROM tasks WHERE user_id = {get_user_id(tg_id)}")
 
     db.commit()
     db.close()

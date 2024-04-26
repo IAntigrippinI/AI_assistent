@@ -1,14 +1,9 @@
-import sys
-import time
-
 import telebot
 import logging
 import requests
 
-import src.setting
-from db import connect, get_telegram_bot_cred, create_tables
+from db import get_telegram_bot_cred, create_tables, remove_task
 from Gigachat import message_processing
-from tg_function import split_answer
 
 logging.getLogger(__name__)
 
@@ -31,13 +26,29 @@ def send_message(tg_id: int, message: str):
 
 @bot.message_handler(content_types=["text"])
 def get_text_messages(got_message):
+    logging.info(got_message.text)
     try:
-        logging.info(got_message.text)
-        answer = message_processing(got_message.from_user.id, got_message.text)
-        logging.info(answer)
-        send_message(got_message.from_user.id, answer)
+        if got_message.text == "/del":
+            remove_task(got_message.from_user.id, 1)
+            send_message(got_message.from_user.id, "Удалено")
+
+        else:
+            answer, source = message_processing(
+                got_message.from_user.id, got_message.text
+            )
+            logging.info(answer)
+            send_message(got_message.from_user.id, answer)
+            if source != "":
+                bot.send_photo(
+                    got_message.from_user.id, open("pict/gantt_chart.png", "rb")
+                )
     except requests.exceptions.ReadTimeout as e:
         logging.critical(f"Read timed out: {e}", exc_info=True)
+    except telebot.apihelper.ApiTelegramException as e:
+        logging.critical(f"Failed to give an answer: {e}", exc_info=True)
+        send_message(
+            got_message.from_user.id, "Извините, не удалось обработать Ваш запрос"
+        )
 
 
 bot.polling(none_stop=True, interval=0)
