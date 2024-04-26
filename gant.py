@@ -92,6 +92,7 @@ def Gant_Diagram(tg_id):
 
     ax.set_title("Диаграмма ганта", color="white", fontsize=14)
 
+    plt.xticks(rotation=-45)
     fig.savefig("pict\gantt_chart.png", dpi=300, bbox_inches="tight")
 
     return "pict\gantt_chart.png"

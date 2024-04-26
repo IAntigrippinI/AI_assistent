@@ -37,5 +37,5 @@ def processing_for_add_in_db(plan: str, handle: str) -> list:
             tuple_tasks.append(tuple([task, time_start, time_finish]))
         else:
             pass
-    print(DATE_PATTERN.findall(plan))
+    # print(DATE_PATTERN.findall(plan))
     return tuple_tasks

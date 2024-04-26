@@ -1,6 +1,5 @@
 import time
 import telebot
-import datetime
 import schedule
 
 import logging
@@ -20,13 +19,12 @@ def send_message(tg_id: int, message: str):
 
 def send_remember():
 
-    # print(users_data)
-
     users_id = get_all_users_id()
     print(users_id)
     for tg_id in users_id:
         user_tasks = get_user_task(tg_id)
         near_tasks = find_near_date(user_tasks)
+
         for task in near_tasks:
             memorise = "Напоминаю, что вам нужно выполнить:\n" + " ".join(task) + "\n"
             recomendation = get_recommendation(task[0])
