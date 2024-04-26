@@ -49,9 +49,9 @@ def message_processing(tg_id: int, message: str) -> str:
             list_tasks_for_db = processing_for_add_in_db(plan, message)
 
             for el in list_tasks_for_db:
-                insert_user_task(tg_id, el)
+                insert_user_task(tg_id, el[0], el[1], el[2])
             return plan
-        
+
         res = chat([PROMPT_FOR_GANT, HumanMessage(content=message)]).content
 
         if res.lower() == "да":
